@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package prueba.sdes;
 
 import java.io.BufferedReader;
@@ -14,16 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- *
- * @author josue
- */
-public class PruebaSDES {
 
-    /**
-     * @param args the command line arguments
-     */
-      
+public class PruebaSDES {
     
     public static void main(String[] args) {
     String [][] S0 = {{"01","00","11","10"},{"11","10","01","00"},{"00","10","01","11"}, {"11","01","11","10"}};
@@ -100,7 +87,7 @@ public class PruebaSDES {
     }
     
     
-    public int[] P10(int [] Entrada)
+    public int[] P10(int[] Entrada)
     {
         Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Entrada.length];
@@ -114,7 +101,7 @@ public class PruebaSDES {
         return ArregloAuxiliar;
     }
     
-    public int[] P8(int [] Entrada)
+    public int[] P8(int[] Entrada)
     {
        Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Datos.P8.length];
@@ -128,15 +115,33 @@ public class PruebaSDES {
         return ArregloAuxiliar; 
     }
     
-     public void LS1()
+     public int[] LS1(int[] Cadena)
     {
+        int temp = Cadena[0];
+        
+        for (int i = 0; i < 4; i++)
+            Cadena[i] = Cadena[i+1];
+        
+        Cadena[4] = temp;
+        
+        return Cadena;
     }
     
-    public void LS2()
+    public int[] LS2(int[] Cadena)
     {
+        int temp1 = Cadena[0];
+        int temp2 = Cadena[1];
+        
+        for (int i = 0; i < 3; i++)
+            Cadena[i] = Cadena[i+2];
+        
+        Cadena[3] = temp1;
+        Cadena[4] = temp2;
+        
+        return Cadena;
     }
     
-    public int [] P4(int [] Entrada)
+    public int [] P4(int[] Entrada)
     {
        Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Entrada.length];
@@ -150,7 +155,7 @@ public class PruebaSDES {
         return ArregloAuxiliar;     
     }
     
-    public int[] EP(int [] Entrada)
+    public int[] EP(int[] Entrada)
     {
        Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Datos.EP.length];
@@ -169,7 +174,7 @@ public class PruebaSDES {
         return ArregloAuxiliar;      
     }
     
-    public int[] IPInverso(int [] Entrada)
+    public int[] IPInverso(int[] Entrada)
     {
         Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Entrada.length];
@@ -181,6 +186,21 @@ public class PruebaSDES {
         }
         
         return ArregloAuxiliar;   
+    }
+    
+    private int[] XOR (int Nivel, int[] Comparador1, int[] Comparador2)
+    {
+        int[] XOR = new int[Nivel];
+        
+        for (int i = 0; i < Nivel; i++)
+        {
+            if(Comparador1[i] == Comparador2[i])
+                XOR[i] = 0;
+            else
+                XOR[i] = 1;
+        }
+        
+        return XOR;
     }
     
     public void S0Box()
