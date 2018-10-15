@@ -12,9 +12,11 @@ import java.util.List;
 
 public class PruebaSDES {
     
+    static String [][] S0 = {{"01","00","11","10"},{"11","10","01","00"},{"00","10","01","11"}, {"11","01","11","10"}};
+    static String [][] S1 = {{"00","01","10","11"},{"10","00","01","11"},{"11","00","01","00"}, {"10","01","00","11"}};
+    
     public static void main(String[] args) {
-    String [][] S0 = {{"01","00","11","10"},{"11","10","01","00"},{"00","10","01","11"}, {"11","01","11","10"}};
-    String [][] S1 = {{"00","01","10","11"},{"10","00","01","11"},{"11","00","01","00"}, {"10","01","00","11"}};
+    
         
         System.out.println(S0[1][2]);
     }
@@ -51,7 +53,6 @@ public class PruebaSDES {
         }
     }
     
-    
     public void Proceso() throws IOException
     {
         //Se Selecciona un Archivo, con el fin de probar por el momento sera este /Desktop/Prueba.txt
@@ -80,12 +81,10 @@ public class PruebaSDES {
         
     }
     
-   
     public void GenerarLlaves(int [] Entrada)
     {
         int[] K1 = P10(Entrada);
     }
-    
     
     public int[] P10(int[] Entrada)
     {
@@ -203,14 +202,51 @@ public class PruebaSDES {
         return XOR;
     }
     
-    public void S0Box()
+    public int[] SBoxes(int [] Arreglo)
     {
+        String Cadena;
+        int[] Auxiliar = new int[3];
+        String [] S0box = new String [1];
+        String [] S1box = new String [1];
         
-    }
-    
-    public void S1Box()
-    {
+        String Aux = "";
         
+        Aux = String.valueOf(Arreglo[0]);
+        Aux = Aux + String.valueOf(Arreglo[1]);
+        S0box[0] = Aux;
+        Aux = "";
+        Aux = String.valueOf(Arreglo[6]);
+        Aux = Aux + String.valueOf(Arreglo[7]);
+        S0box[1] = Aux;
+        
+        Aux = String.valueOf(Arreglo[2]);
+        Aux = Aux + String.valueOf(Arreglo[3]);
+        S1box[0] = Aux;
+        Aux = "";
+        Aux = String.valueOf(Arreglo[4]);
+        Aux = Aux + String.valueOf(Arreglo[5]);
+        S1box[1] = Aux;
+        
+       
+        int Fila = Integer.valueOf(S0box[0],2);
+        int Columna = Integer.valueOf(S0box[1],2);
+        
+        Cadena = S0[Fila][Columna];
+        
+        Fila = Integer.valueOf(S1box[0],2);
+        Columna = Integer.valueOf(S1box[1],2);
+        
+        Cadena = Cadena + S1[Fila][Columna];
+        
+        char[] cadenaSeparada = Cadena.toCharArray();
+        for (int i = 0; i < cadenaSeparada.length; i++) 
+        {
+            
+        Auxiliar[i] = cadenaSeparada[i];
+        
+        }
+         
+        return Auxiliar;
     }
-    
+     
 }
