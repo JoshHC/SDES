@@ -286,4 +286,15 @@ public class PruebaSDES {
         return Auxiliar;
     }
      
+    
+    public String BinarioaString(int [] texto)
+    {
+
+        String Auxiliar = texto.toString();
+        int TextoBinario = Integer.valueOf(Auxiliar,2);
+        String Letra = String.valueOf((char) TextoBinario);
+
+        return Letra;
+    }
+    
 }
