@@ -14,16 +14,17 @@ public class PruebaSDES {
     
     static String [][] S0 = {{"01","00","11","10"},{"11","10","01","00"},{"00","10","01","11"}, {"11","01","11","10"}};
     static String [][] S1 = {{"00","01","10","11"},{"10","00","01","11"},{"11","00","01","00"}, {"10","01","00","11"}};
+    private int[] K1 = new int [8];
+    private int[] K2 = new int [8];
     
     public static void main(String[] args) {
-    
-        
         System.out.println(S0[1][2]);
     }
     
-    public int[] RellenarCeros(int Letra)
+    public int[] RellenarCeros(char Letra)
     {
-        String Aux = Integer.toBinaryString(Letra);
+        int numero = Letra;
+        String Aux = Integer.toBinaryString(numero);
         char[] Arrayderelleno = Aux.toCharArray();
         int [] ArrayRellenado = new int[7];
         
@@ -97,7 +98,7 @@ public class PruebaSDES {
         HashMap<Integer,Character> AlmacendeLetras = new HashMap<Integer,Character>();
         
         //Se deben Generar las llaves para luego entrar a SDES
-        //GenerarLlaves("Enviar el Arreglo de Int que se usara para generar la llave aqui");
+        //GenerarLlaves(NUMERO QUE INGRESA EL USUARIO);
         
         char[] Texto = Lectura(Archivo);
         for(char item: Texto)
@@ -118,10 +119,96 @@ public class PruebaSDES {
         
     }
     
+    
     public void GenerarLlaves(int [] Entrada)
     {
-        int[] K1 = P10(Entrada);
+        int[] temp = new int[10];
+        temp = P10(Entrada);
+        
+        int[] Parte1 = new int[5];
+        int[] Parte2 = new int[5];
+        
+        for (int i = 0; i < 5; i++)
+        {
+            Parte1[i] = temp[i];
+            Parte2[i+5] = temp[i+5];
+        }
+   
+        Parte1 = LS1(Parte1);
+        Parte2 = LS1(Parte2);
+        
+        for(int i = 0 ; i < 5; i++)
+            temp[i] = Parte1[i];
+        
+        for(int i = 5; i < 10; i++)
+            temp[i] = Parte2[i-5];
+        
+        K1 = P8(temp);
+        
+        Parte1 = LS2(Parte1);
+        Parte2 = LS2(Parte2);
+        
+        for(int i = 0 ; i < 5; i++)
+            temp[i] = Parte1[i];
+        
+        for(int i = 5; i < 10; i++)
+            temp[i] = Parte2[i-5];
+        
+        K2 = P8(temp);
     }
+    
+    
+    public int[] CifrarSDES(char Letra)
+    {
+        int[] temp = new int[8];
+        temp = RellenarCeros(Letra);
+        
+        temp = IP(Letra);
+        
+        int[] Externo1 = new int[4];
+        int[] Externo2 = new int[4];
+        
+        for (int i = 0; i < 4; i++)
+        {
+            Externo1[i] = temp[i];
+            Externo2[i+4] = temp[i+4];
+        }
+        
+        int[] TempInterno = new int[8];
+        
+        TempInterno = EP(Externo2);
+        TempInterno = XOR(8, TempInterno, K1);
+        
+        int[] SBox = new int[4];
+        
+        SBox = SBoxes(TempInterno);
+        SBox = P4(SBox);
+        
+        Externo1 = XOR(4, Externo1, SBox);
+        
+        // SE DAN VUELTA EXTERNO1 Y EXTERNO2 (PRESENTACION)
+        
+        TempInterno = new int[8];
+        
+        TempInterno = EP(Externo1);
+        TempInterno = XOR(8, TempInterno, K2);
+        
+        SBox = new int[4];
+        
+        SBox = SBoxes(TempInterno);
+        SBox = P4(SBox);
+        
+        Externo2 = XOR(4, Externo2, SBox);
+        
+        for (int i = 0; i < 5; i++)
+            temp[i] = Externo2[i];
+        
+        for (int i = 5; i < 10; i++)
+            temp[i] = Externo1[i-5];
+        
+        return IPInverso(temp);
+    }
+    
     
     public int[] P10(int[] Entrada)
     {
