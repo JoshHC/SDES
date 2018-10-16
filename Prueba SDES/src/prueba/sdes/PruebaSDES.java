@@ -210,6 +210,20 @@ public class PruebaSDES {
     }
     
     
+    public int[] PInicial(int[] Entrada)
+    {
+        Constantes Datos = new Constantes();
+        int [] ArregloAuxiliar = new int[Entrada.length];
+                
+        
+        for(int i = 0; i<= Datos.PermutacionInicial.length; i++)
+        {
+            ArregloAuxiliar[i] = Entrada[Datos.PermutacionInicial[i]];
+        }
+        
+        return ArregloAuxiliar;
+    }
+    
     public int[] P10(int[] Entrada)
     {
         Constantes Datos = new Constantes();
