@@ -21,6 +21,43 @@ public class PruebaSDES {
         System.out.println(S0[1][2]);
     }
     
+    public int[] RellenarCeros(int Letra)
+    {
+        String Aux = Integer.toBinaryString(Letra);
+        char[] Arrayderelleno = Aux.toCharArray();
+        int [] ArrayRellenado = new int[7];
+        
+        if(Arrayderelleno.length < 8)
+        {
+            
+            int Cantidad = 8 - Aux.length();
+            String ceros = "";
+            
+            for(int i = 0; i<= Cantidad; i++)
+            {
+                ceros = ceros + "0";
+            }
+            
+            Aux = ceros+Aux;
+            Arrayderelleno = Aux.toCharArray();
+            
+            for(int i = 0; i<= Arrayderelleno.length; i++)
+            {
+                ArrayRellenado[i] = Arrayderelleno[i];
+            }     
+            
+        }else
+        {
+            for(int i = 0; i<= Arrayderelleno.length; i++)
+            {
+                ArrayRellenado[i] = Arrayderelleno[i];
+            }
+        }
+        
+        
+        return ArrayRellenado;
+    }
+    
     public char[] Lectura(File Archivo) throws FileNotFoundException, IOException
     {
          if(Archivo.exists()==true)
