@@ -8,25 +8,69 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 
 public class PruebaSDES {
     
     static String [][] S0 = {{"01","00","11","10"},{"11","10","01","00"},{"00","10","01","11"}, {"11","01","11","10"}};
     static String [][] S1 = {{"00","01","10","11"},{"10","00","01","11"},{"11","00","01","00"}, {"10","01","00","11"}};
-    private int[] K1 = new int [8];
-    private int[] K2 = new int [8];
+    private static int[] K1 = new int [8];
+    private static int[] K2 = new int [8];
+    
     
     public static void main(String[] args) {
-        System.out.println(S0[1][2]);
+        System.out.println("Dame tu numero");
+        
+        Scanner leer = new Scanner(System.in);
+        
+        String numero = "0000010110";
+                //leer.nextLine();
+        char[] cadenaChar = new char[10];
+        cadenaChar = numero.toCharArray();
+        int[] cadenaInt = new int[10];
+        
+        for (int i = 0; i < 10; i++)
+        {
+            cadenaInt[i] = cadenaChar[i];
+            
+            if(cadenaInt[i] == 48)
+                cadenaInt[i] = 0;
+            else
+                cadenaInt[i] = 1;
+        }
+            
+        
+        GenerarLlaves(cadenaInt);
+        
+        String k1 = "";
+        String k2 = "";
+        
+        for(int i = 0; i < 8; i++)
+        {
+            k1 += String.valueOf(K1[i]);
+            k2 += String.valueOf(K2[i]);
+        }
+        
+        System.out.println(k1);
+        System.out.println(k2);
+        
+        System.out.println("");
+        
+        char letraCifrada = CifrarSDES('P');
+        System.out.println(letraCifrada);
+        
+        char letraDesifrada = DescifrarSDES(letraCifrada);
+        System.out.println(letraDesifrada);
     }
+   
     
-    public int[] RellenarCeros(char Letra)
+    public static int[] RellenarCeros(char Letra)
     {
         int numero = Letra;
         String Aux = Integer.toBinaryString(numero);
         char[] Arrayderelleno = Aux.toCharArray();
-        int [] ArrayRellenado = new int[7];
+        int [] ArrayRellenado = new int[8];
         
         if(Arrayderelleno.length < 8)
         {
@@ -34,7 +78,7 @@ public class PruebaSDES {
             int Cantidad = 8 - Aux.length();
             String ceros = "";
             
-            for(int i = 0; i<= Cantidad; i++)
+            for(int i = 0; i< Cantidad; i++)
             {
                 ceros = ceros + "0";
             }
@@ -42,16 +86,26 @@ public class PruebaSDES {
             Aux = ceros+Aux;
             Arrayderelleno = Aux.toCharArray();
             
-            for(int i = 0; i<= Arrayderelleno.length; i++)
+            for(int i = 0; i < Arrayderelleno.length; i++)
             {
                 ArrayRellenado[i] = Arrayderelleno[i];
+                
+                if(ArrayRellenado[i] == 48)
+                    ArrayRellenado[i] = 0;
+                else 
+                    ArrayRellenado[i] = 1;
             }     
             
         }else
         {
-            for(int i = 0; i<= Arrayderelleno.length; i++)
+            for(int i = 0; i< Arrayderelleno.length; i++)
             {
                 ArrayRellenado[i] = Arrayderelleno[i];
+                
+                if(ArrayRellenado[i] == 48)
+                    ArrayRellenado[i] = 0;
+                else 
+                    ArrayRellenado[i] = 1;
             }
         }
         
@@ -59,7 +113,7 @@ public class PruebaSDES {
         return ArrayRellenado;
     }
     
-    public char[] Lectura(File Archivo) throws FileNotFoundException, IOException
+    public static char[] Lectura(File Archivo) throws FileNotFoundException, IOException
     {
          if(Archivo.exists()==true)
         {
@@ -91,7 +145,7 @@ public class PruebaSDES {
         }
     }
     
-    public void Proceso() throws IOException
+    public static void Proceso() throws IOException
     {
         //Se Selecciona un Archivo, con el fin de probar por el momento sera este /Desktop/Prueba.txt
         File Archivo = new File("C:\\Users\\josue\\Desktop");
@@ -120,7 +174,7 @@ public class PruebaSDES {
     }
     
     
-    public void GenerarLlaves(int [] Entrada)
+    public static void GenerarLlaves(int [] Entrada)
     {
         int[] temp = new int[10];
         temp = P10(Entrada);
@@ -131,7 +185,7 @@ public class PruebaSDES {
         for (int i = 0; i < 5; i++)
         {
             Parte1[i] = temp[i];
-            Parte2[i+5] = temp[i+5];
+            Parte2[i] = temp[i+5];
         }
    
         Parte1 = LS1(Parte1);
@@ -158,12 +212,12 @@ public class PruebaSDES {
     }
     
     
-    public int[] CifrarSDES(char Letra)
+    public static char CifrarSDES(char Letra)
     {
         int[] temp = new int[8];
         temp = RellenarCeros(Letra);
         
-        temp = IP(Letra);
+        temp = PInicial(temp);
         
         int[] Externo1 = new int[4];
         int[] Externo2 = new int[4];
@@ -171,52 +225,127 @@ public class PruebaSDES {
         for (int i = 0; i < 4; i++)
         {
             Externo1[i] = temp[i];
-            Externo2[i+4] = temp[i+4];
+            Externo2[i] = temp[i+4];
         }
         
         int[] TempInterno = new int[8];
         
         TempInterno = EP(Externo2);
-        TempInterno = XOR(8, TempInterno, K1);
+        TempInterno = XOR(TempInterno, K1);
         
         int[] SBox = new int[4];
         
         SBox = SBoxes(TempInterno);
         SBox = P4(SBox);
         
-        Externo1 = XOR(4, Externo1, SBox);
+        Externo1 = XOR(Externo1, SBox);
         
         // SE DAN VUELTA EXTERNO1 Y EXTERNO2 (PRESENTACION)
         
+        temp = new int[8];
         TempInterno = new int[8];
         
         TempInterno = EP(Externo1);
-        TempInterno = XOR(8, TempInterno, K2);
+        TempInterno = XOR(TempInterno, K2);
         
         SBox = new int[4];
         
         SBox = SBoxes(TempInterno);
         SBox = P4(SBox);
         
-        Externo2 = XOR(4, Externo2, SBox);
+        Externo2 = XOR(Externo2, SBox);
         
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 4; i++)
             temp[i] = Externo2[i];
         
-        for (int i = 5; i < 10; i++)
-            temp[i] = Externo1[i-5];
+        for (int i = 4; i < 8; i++)
+            temp[i] = Externo1[i-4];
         
-        return IPInverso(temp);
+        int[] cifrado = new int[8];
+        cifrado = IPInverso(temp);
+        
+        String texto = "";
+        
+        for (int i = 0; i < 8; i++)
+            texto += cifrado[i];
+        
+        int numero = Integer.parseInt(texto,2);
+        char letraCifrado = (char) numero;
+                
+        return letraCifrado;
+    }
+    
+    public static char DescifrarSDES(char Letra)
+    {
+        int[] temp = new int[8];
+        temp = RellenarCeros(Letra);
+        
+        temp = PInicial(temp);
+        
+        int[] Externo1 = new int[4];
+        int[] Externo2 = new int[4];
+        
+        for (int i = 0; i < 4; i++)
+        {
+            Externo1[i] = temp[i];
+            Externo2[i] = temp[i+4];
+        }
+        
+        int[] TempInterno = new int[8];
+        
+        TempInterno = EP(Externo2);
+        TempInterno = XOR(TempInterno, K2);
+        
+        int[] SBox = new int[4];
+        
+        SBox = SBoxes(TempInterno);
+        SBox = P4(SBox);
+        
+        Externo1 = XOR(Externo1, SBox);
+        
+        // SE DAN VUELTA EXTERNO1 Y EXTERNO2 (PRESENTACION)
+        
+        temp = new int[8];
+        TempInterno = new int[8];
+        
+        TempInterno = EP(Externo1);
+        TempInterno = XOR(TempInterno, K1);
+        
+        SBox = new int[4];
+        
+        SBox = SBoxes(TempInterno);
+        SBox = P4(SBox);
+        
+        Externo2 = XOR(Externo2, SBox);
+        
+        for (int i = 0; i < 4; i++)
+            temp[i] = Externo2[i];
+        
+        for (int i = 4; i < 8; i++)
+            temp[i] = Externo1[i-4];
+        
+        int[] cifrado = new int[8];
+        cifrado = IPInverso(temp);
+        
+        String texto = "";
+        
+        for (int i = 0; i < 8; i++)
+            texto += cifrado[i];
+        
+        int numero = Integer.parseInt(texto,2);
+        char letraDescifrado = (char) numero;
+                
+        return letraDescifrado;   
     }
     
     
-    public int[] PInicial(int[] Entrada)
+    public static int[] PInicial(int[] Entrada)
     {
         Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Entrada.length];
                 
         
-        for(int i = 0; i<= Datos.PermutacionInicial.length; i++)
+        for(int i = 0; i< Datos.PermutacionInicial.length; i++)
         {
             ArregloAuxiliar[i] = Entrada[Datos.PermutacionInicial[i]];
         }
@@ -224,13 +353,13 @@ public class PruebaSDES {
         return ArregloAuxiliar;
     }
     
-    public int[] P10(int[] Entrada)
+    public static int[] P10(int[] Entrada)
     {
         Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Entrada.length];
                 
         
-        for(int i = 0; i<= Datos.P10.length; i++)
+        for(int i = 0; i< Datos.P10.length; i++)
         {
             ArregloAuxiliar[i] = Entrada[Datos.P10[i]];
         }
@@ -238,13 +367,13 @@ public class PruebaSDES {
         return ArregloAuxiliar;
     }
     
-    public int[] P8(int[] Entrada)
+    public static int[] P8(int[] Entrada)
     {
        Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Datos.P8.length];
                 
         
-        for(int i = 0; i<=Datos.P8.length; i++)
+        for(int i = 0; i< Datos.P8.length; i++)
         {
             ArregloAuxiliar[i] = Entrada[Datos.P8[i]];
         }
@@ -252,7 +381,7 @@ public class PruebaSDES {
         return ArregloAuxiliar; 
     }
     
-     public int[] LS1(int[] Cadena)
+     public static int[] LS1(int[] Cadena)
     {
         int temp = Cadena[0];
         
@@ -264,7 +393,7 @@ public class PruebaSDES {
         return Cadena;
     }
     
-    public int[] LS2(int[] Cadena)
+    public static int[] LS2(int[] Cadena)
     {
         int temp1 = Cadena[0];
         int temp2 = Cadena[1];
@@ -278,13 +407,13 @@ public class PruebaSDES {
         return Cadena;
     }
     
-    public int [] P4(int[] Entrada)
+    public static int [] P4(int[] Entrada)
     {
        Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Entrada.length];
                 
         
-        for(int i = 0; i<=Datos.P4.length; i++)
+        for(int i = 0; i< Datos.P4.length; i++)
         {
             ArregloAuxiliar[i] = Entrada[Datos.P4[i]];
         }
@@ -292,7 +421,7 @@ public class PruebaSDES {
         return ArregloAuxiliar;     
     }
     
-    public int[] EP(int[] Entrada)
+    public static int[] EP(int[] Entrada)
     {
        Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Datos.EP.length];
@@ -311,25 +440,25 @@ public class PruebaSDES {
         return ArregloAuxiliar;      
     }
     
-    public int[] IPInverso(int[] Entrada)
+    public static int[] IPInverso(int[] Entrada)
     {
         Constantes Datos = new Constantes();
         int [] ArregloAuxiliar = new int[Entrada.length];
                 
         
-        for(int i = 0; i<= Datos.P10.length; i++)
+        for(int i = 0; i < 8; i++)
         {
-            ArregloAuxiliar[i] = Datos.P10[Entrada[i]];
+            ArregloAuxiliar[Datos.PermutacionInicial[i]] = Entrada[i];
         }
         
         return ArregloAuxiliar;   
     }
     
-    private int[] XOR (int Nivel, int[] Comparador1, int[] Comparador2)
+    private static int[] XOR (int[] Comparador1, int[] Comparador2)
     {
-        int[] XOR = new int[Nivel];
+        int[] XOR = new int[Comparador1.length];
         
-        for (int i = 0; i < Nivel; i++)
+        for (int i = 0; i < Comparador1.length; i++)
         {
             if(Comparador1[i] == Comparador2[i])
                 XOR[i] = 0;
@@ -340,29 +469,29 @@ public class PruebaSDES {
         return XOR;
     }
     
-    public int[] SBoxes(int [] Arreglo)
+    public static int[] SBoxes(int [] Arreglo)
     {
         String Cadena;
-        int[] Auxiliar = new int[3];
-        String [] S0box = new String [1];
-        String [] S1box = new String [1];
+        int[] Auxiliar = new int[4];
+        String [] S0box = new String [2];
+        String [] S1box = new String [2];
         
         String Aux = "";
         
         Aux = String.valueOf(Arreglo[0]);
-        Aux = Aux + String.valueOf(Arreglo[1]);
+        Aux = Aux + String.valueOf(Arreglo[3]);
         S0box[0] = Aux;
         Aux = "";
-        Aux = String.valueOf(Arreglo[6]);
-        Aux = Aux + String.valueOf(Arreglo[7]);
+        Aux = String.valueOf(Arreglo[1]);
+        Aux = Aux + String.valueOf(Arreglo[2]);
         S0box[1] = Aux;
         
-        Aux = String.valueOf(Arreglo[2]);
-        Aux = Aux + String.valueOf(Arreglo[3]);
+        Aux = String.valueOf(Arreglo[4]);
+        Aux = Aux + String.valueOf(Arreglo[7]);
         S1box[0] = Aux;
         Aux = "";
-        Aux = String.valueOf(Arreglo[4]);
-        Aux = Aux + String.valueOf(Arreglo[5]);
+        Aux = String.valueOf(Arreglo[5]);
+        Aux = Aux + String.valueOf(Arreglo[6]);
         S1box[1] = Aux;
         
        
@@ -379,9 +508,12 @@ public class PruebaSDES {
         char[] cadenaSeparada = Cadena.toCharArray();
         for (int i = 0; i < cadenaSeparada.length; i++) 
         {
+            Auxiliar[i] = cadenaSeparada[i];
             
-        Auxiliar[i] = cadenaSeparada[i];
-        
+            if(Auxiliar[i] == 48)
+                    Auxiliar[i] = 0;
+                else 
+                    Auxiliar[i] = 1;
         }
          
         return Auxiliar;
