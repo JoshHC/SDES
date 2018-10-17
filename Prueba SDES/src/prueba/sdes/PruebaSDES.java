@@ -19,7 +19,7 @@ public class PruebaSDES {
     private static int[] K2 = new int [8];
     
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println("Dame tu numero");
         
         Scanner leer = new Scanner(System.in);
@@ -57,11 +57,27 @@ public class PruebaSDES {
         
         System.out.println("");
         
-        char letraCifrada = CifrarSDES('P');
-        System.out.println(letraCifrada);
+         File Archivo = new File("C:\\Users\\josue\\Desktop");
+        char[] TextoaCifrar = Lectura(Archivo);
+        String TextoparaEscribir = "";
         
-        char letraDesifrada = DescifrarSDES(letraCifrada);
-        System.out.println(letraDesifrada);
+        for(int i = 0; i<= TextoaCifrar.length; i++)
+        {
+            char letraCifrada = CifrarSDES(TextoaCifrar[i]);
+            TextoparaEscribir = TextoparaEscribir + String.valueOf(letraCifrada);
+        }
+        System.out.println(TextoparaEscribir);
+        
+        char[] TextoaDescifrar = TextoparaEscribir.toCharArray();
+        TextoparaEscribir = "";
+        
+        for(int i = 0; i<= TextoaDescifrar.length; i++)
+        {
+            char letraDesifrada = DescifrarSDES(TextoaDescifrar[i]);
+            TextoparaEscribir = TextoparaEscribir + String.valueOf(letraDesifrada);
+        }
+        
+        System.out.println(TextoparaEscribir);
     }
    
     
